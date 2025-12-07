@@ -17,12 +17,34 @@ public class DuckCreateTest extends TestNGCitrusSpringSupport {
     @CitrusTest
     public void successfulCreate(@Optional @CitrusResource TestCaseRunner runner) {
         String color = "yellow";
-        double height = 1;
-        String material = "metal";
+        double height = 0.3;
+        String material = "rubber";
         String sound = "qack";
         String wingsState = "FIXED";
         createDuck(runner, color, height, material, sound, wingsState);
-        validateResponse(runner, "{\n \"message\":\"I'm swiming\"\n}");
+        validateResponse(runner, "{\n" +
+                                 "\"id\":" + 10 + ",\n" +
+                                 "\"color\":\"" + color + "\",\n" +
+                                 "\"height\":" + height + ",\n" +
+                                 "\"material\":\"" + material + "\",\n" +
+                                 "\"sound\":\"" + sound + "\",\n" +
+                                 "\"wingsState\":\"" + wingsState + "\"\n" +
+                                 "}");
+//        color = "yellow";
+//        height = 1;
+//        material = "wood";
+//        sound = "qack";
+//        wingsState = "ACTIVE";
+//        createDuck(runner, color, height, material, sound, wingsState);
+//        validateResponse(runner, "{\n" +
+//                                 "\"id\":\"" + 2 +
+//                                 "\"color\":\"" + color + "\",\n" +
+//                                 "\"height\":" + height + ",\n" +
+//                                 "\"material\":\"" + material + "\",\n" +
+//                                 "\"sound\":\"" + sound + "\",\n" +
+//                                 "\"wingsState\":\"" + wingsState + "\"\n" +
+//                                 "}");
+
 
     }
 
