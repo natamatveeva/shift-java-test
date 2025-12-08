@@ -16,7 +16,7 @@ import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 public class DuckCreateTest extends TestNGCitrusSpringSupport {
     @Test(description = "Создание резиновой уточки")
     @CitrusTest
-    public void successfulCreate(@Optional @CitrusResource TestCaseRunner runner) {
+    public void successfulRubberCreate(@Optional @CitrusResource TestCaseRunner runner) {
         String color = "yellow";
         double height = 0.3;
         String material = "rubber";
@@ -34,7 +34,7 @@ public class DuckCreateTest extends TestNGCitrusSpringSupport {
     }
         @Test(description = "Создание деревянной уточки")
         @CitrusTest
-        public void successfulCreate(@Optional @CitrusResource TestCaseRunner runner) {
+        public void successfulWoodCreate(@Optional @CitrusResource TestCaseRunner runner) {
             String color = "yellow";
             double height = 0.3;
             String material = "wood";
