@@ -41,8 +41,12 @@ public class DuckCreateTest extends TestNGCitrusSpringSupport {
             String sound = "qack";
             String wingsState = "FIXED";
             createDuck(runner, color, height, material, sound, wingsState);
+            String id = extractDataFromResponse(runner);
+            // тест ломается пиз-за того, что не получается вставить id правильно (так я это вижу)...
+            // как исправить не могу понять...
+            // причем такое же использование id в другом тесте проходит
             validateResponse(runner, "{\n" +
-                                 "\"id\":\"" + 2 + ",\n" +
+                                 "\"id\":\"" + id + ",\n" +
                                  "\"color\":\"" + color + "\",\n" +
                                  "\"height\":" + height + ",\n" +
                                  "\"material\":\"" + material + "\",\n" +
