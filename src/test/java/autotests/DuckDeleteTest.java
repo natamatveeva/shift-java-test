@@ -23,7 +23,7 @@ public class DuckDeleteTest extends TestNGCitrusSpringSupport {
         String sound = "qack";
         String wingsState = "FIXED";
         createDuck(runner, color, height, material, sound, wingsState);
-        deleteDuck(runner, extractDataFromResponse(runner));
+        deleteDuck(runner, extractIdDuckFromResponse(runner));
         validateResponse(runner, "{\n" +
                                  "\"message\":" + "\"Duck is deleted\"\n" +
                                  "}");
@@ -46,7 +46,7 @@ public class DuckDeleteTest extends TestNGCitrusSpringSupport {
                               "}")
         );
     }
-    public String extractDataFromResponse(TestCaseRunner runner) {
+    public String extractIdDuckFromResponse(TestCaseRunner runner) {
         runner.$(
                 http()
                         .client("http://localhost:2222")
