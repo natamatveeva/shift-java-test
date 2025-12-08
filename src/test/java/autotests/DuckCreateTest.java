@@ -14,6 +14,9 @@ import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 public class DuckCreateTest extends TestNGCitrusSpringSupport {
+
+    String id;
+
     @Test(description = "Создание резиновой уточки")
     @CitrusTest
     public void successfulRubberCreate(@Optional @CitrusResource TestCaseRunner runner) {
@@ -23,8 +26,12 @@ public class DuckCreateTest extends TestNGCitrusSpringSupport {
         String sound = "qack";
         String wingsState = "FIXED";
         createDuck(runner, color, height, material, sound, wingsState);
+        // тест ломается из-за того, что не получается вставить id правильно (так я это вижу)...
+        // как исправить не могу понять...
+        // причем такое же использование id в другом тесте проходит
+        id = extractIdDuckFromResponse(runner);
         validateResponse(runner, "{\n" +
-                                 "\"id\":" + 1 + ",\n" +
+                                 "\"id\":" + id + ",\n" +
                                  "\"color\":\"" + color + "\",\n" +
                                  "\"height\":" + height + ",\n" +
                                  "\"material\":\"" + material + "\",\n" +
@@ -41,8 +48,8 @@ public class DuckCreateTest extends TestNGCitrusSpringSupport {
             String sound = "qack";
             String wingsState = "FIXED";
             createDuck(runner, color, height, material, sound, wingsState);
-            String id = extractDataFromResponse(runner);
-            // тест ломается пиз-за того, что не получается вставить id правильно (так я это вижу)...
+            id = extractIdDuckFromResponse(runner);
+            // тест ломается из-за того, что не получается вставить id правильно (так я это вижу)...
             // как исправить не могу понять...
             // причем такое же использование id в другом тесте проходит
             validateResponse(runner, "{\n" +
@@ -55,13 +62,21 @@ public class DuckCreateTest extends TestNGCitrusSpringSupport {
                                  "}");
     }
 
-    public void createDuck(TestCaseRunner runner, String color, double height, String material, String sound, String wingsState) {
+    public void createDuck(
+            TestCaseRunner runner,
+            String color,
+            double height,
+            String material,
+            String sound,
+            String wingsState
+    ) {
         runner.$(
                 http()
                         .client("http://localhost:2222")
                         .send()
                         .post("/api/duck/create")
-                        .message().contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .message()
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .body("{\n" +
                               "\"color\":\"" + color + "\",\n" +
                               "\"height\":" + height + ",\n" +
@@ -71,7 +86,7 @@ public class DuckCreateTest extends TestNGCitrusSpringSupport {
                               "}")
         );
     }
-    public String extractDataFromResponse(TestCaseRunner runner) {
+    public String extractIdDuckFromResponse(TestCaseRunner runner) {
         runner.$(
                 http()
                         .client("http://localhost:2222")

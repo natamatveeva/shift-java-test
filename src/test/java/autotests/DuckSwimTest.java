@@ -14,6 +14,9 @@ import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 public class DuckSwimTest extends TestNGCitrusSpringSupport {
+
+    String id;
+
     @Test(description = "Уточка плыви (существующий id)")
     @CitrusTest
     public void successfulSwimRightId(@Optional @CitrusResource TestCaseRunner runner) {
@@ -23,7 +26,8 @@ public class DuckSwimTest extends TestNGCitrusSpringSupport {
         String sound = "qack";
         String wingsState = "FIXED";
         createDuck(runner, color, height, material, sound, wingsState);
-        swimDuck(runner, extractDataFromResponse(runner));
+        id = extractIdDuckFromResponse(runner);
+        swimDuck(runner, id);
         validateResponse(runner, "{\n" +
                                  "\"message\":" + "\"I'm swimming\"\n" +
                                  "}");
@@ -37,7 +41,8 @@ public class DuckSwimTest extends TestNGCitrusSpringSupport {
         String sound = "qack";
         String wingsState = "ACTIVE";
         createDuck(runner, color, height, material, sound, wingsState);
-        swimDuck(runner, extractDataFromResponse(runner));
+        id = extractIdDuckFromResponse(runner);
+        swimDuck(runner, id);
         validateResponse(runner, "{\n" +
                                  "\"message\":" + "\"Paws are not found ((((\"\n" +
                                  "}");
@@ -71,7 +76,7 @@ public class DuckSwimTest extends TestNGCitrusSpringSupport {
         );
     }
 
-    public String extractDataFromResponse(TestCaseRunner runner) {
+    public String extractIdDuckFromResponse(TestCaseRunner runner) {
         runner.$(
                 http()
                         .client("http://localhost:2222")
