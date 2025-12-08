@@ -3,12 +3,14 @@ package autotests;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
+import com.consol.citrus.message.MessageType;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
 
+import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 public class DuckDeleteTest extends TestNGCitrusSpringSupport {
@@ -20,8 +22,8 @@ public class DuckDeleteTest extends TestNGCitrusSpringSupport {
         String material = "rubber";
         String sound = "qack";
         String wingsState = "FIXED";
-//        createDuck(runner, color, height, material, sound, wingsState);
-        deleteDuck(runner, "10");
+        createDuck(runner, color, height, material, sound, wingsState);
+        deleteDuck(runner, extractDataFromResponse(runner));
         validateResponse(runner, "{\n" +
                                  "\"message\":" + "\"Duck is deleted\"\n" +
                                  "}");
@@ -43,6 +45,18 @@ public class DuckDeleteTest extends TestNGCitrusSpringSupport {
                               "\"wingsState\":\"" + wingsState + "\"\n" +
                               "}")
         );
+    }
+    public String extractDataFromResponse(TestCaseRunner runner) {
+        runner.$(
+                http()
+                        .client("http://localhost:2222")
+                        .receive()
+                        .response(HttpStatus.OK)
+                        .message()
+                        .type(MessageType.JSON)
+                        .extract(fromBody().expression("$.id","id"))
+        );
+        return "${id}";
     }
     public void deleteDuck(TestCaseRunner runner, String id) {
         runner.$(
