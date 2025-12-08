@@ -14,6 +14,9 @@ import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 public class DuckDeleteTest extends TestNGCitrusSpringSupport {
+
+    String id;
+
     @Test(description="Удаление утки")
     @CitrusTest
     public void successfulDelete(@Optional @CitrusResource TestCaseRunner runner) {
@@ -23,7 +26,8 @@ public class DuckDeleteTest extends TestNGCitrusSpringSupport {
         String sound = "qack";
         String wingsState = "FIXED";
         createDuck(runner, color, height, material, sound, wingsState);
-        deleteDuck(runner, extractIdDuckFromResponse(runner));
+        id = extractIdDuckFromResponse(runner);
+        deleteDuck(runner, id);
         validateResponse(runner, "{\n" +
                                  "\"message\":" + "\"Duck is deleted\"\n" +
                                  "}");
