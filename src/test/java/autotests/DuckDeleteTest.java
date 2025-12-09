@@ -1,5 +1,6 @@
 package autotests;
 
+import autotests.clients.DuckActionsClient;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
@@ -13,7 +14,7 @@ import org.testng.annotations.Test;
 import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
-public class DuckDeleteTest extends TestNGCitrusSpringSupport {
+public class DuckDeleteTest extends DuckActionsClient {
 
     @Test(description="Удаление утки")
     @CitrusTest
@@ -30,54 +31,5 @@ public class DuckDeleteTest extends TestNGCitrusSpringSupport {
                                  "\"message\":" + "\"Duck is deleted\"\n" +
                                  "}");
 
-    }
-
-    public void createDuck(TestCaseRunner runner, String color, double height, String material, String sound, String wingsState) {
-        runner.$(
-                http()
-                        .client("http://localhost:2222")
-                        .send()
-                        .post("/api/duck/create")
-                        .message().contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .body("{\n" +
-                              "\"color\":\"" + color + "\",\n" +
-                              "\"height\":" + height + ",\n" +
-                              "\"material\":\"" + material + "\",\n" +
-                              "\"sound\":\"" + sound + "\",\n" +
-                              "\"wingsState\":\"" + wingsState + "\"\n" +
-                              "}")
-        );
-    }
-    public String extractIdDuckFromResponse(TestCaseRunner runner) {
-        runner.$(
-                http()
-                        .client("http://localhost:2222")
-                        .receive()
-                        .response(HttpStatus.OK)
-                        .message()
-                        .type(MessageType.JSON)
-                        .extract(fromBody().expression("$.id","id"))
-        );
-        return "${id}";
-    }
-    public void deleteDuck(TestCaseRunner runner, String id) {
-        runner.$(
-                http()
-                        .client("http://localhost:2222")
-                        .send()
-                        .delete("/api/duck/delete")
-                        .queryParam("id", id));
-
-    }
-    public void validateResponse(TestCaseRunner runner, String responseMessage) {
-        runner.$(
-                http()
-                        .client("http://localhost:2222")
-                        .receive()
-                        .response(HttpStatus.OK)
-                        .message()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .body(responseMessage)
-        );
     }
 }
