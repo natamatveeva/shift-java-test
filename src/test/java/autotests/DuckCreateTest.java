@@ -19,8 +19,9 @@ public class DuckCreateTest extends DuckActionsClient {
 
     @Test(description = "Создание резиновой уточки")
     @CitrusTest
-    public void successfulRubberCreate(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
-                                       TestContext context) {
+    public void successfulRubberCreate(@Optional @CitrusResource TestCaseRunner runner,
+                                       @Optional @CitrusResource TestContext context
+                                      ) {
         String color = "yellow";
         double height = 0.3;
         String material = "rubber";
@@ -37,10 +38,12 @@ public class DuckCreateTest extends DuckActionsClient {
                                  "\"wingsState\":\"" + wingsState + "\"\n" +
                                  "}");
     }
+
     @Test(description = "Создание деревянной уточки")
     @CitrusTest
-    public void successfulWoodCreate(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
-                                     TestContext context) {
+    public void successfulWoodCreate(@Optional @CitrusResource TestCaseRunner runner,
+                                     @Optional @CitrusResource TestContext context
+                                    ) {
         String color = "yellow";
         double height = 0.3;
         String material = "wood";
