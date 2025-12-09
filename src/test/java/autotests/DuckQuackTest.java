@@ -1,5 +1,6 @@
 package autotests;
 
+import autotests.clients.DuckActionsClient;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
@@ -14,7 +15,7 @@ import org.testng.annotations.Test;
 import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
-public class DuckQuackTest extends TestNGCitrusSpringSupport {
+public class DuckQuackTest extends DuckActionsClient {
 
     @Test(description = "Тест издаваемого звука, если id четный")
     @CitrusTest
@@ -62,66 +63,5 @@ public class DuckQuackTest extends TestNGCitrusSpringSupport {
             getQuackDuck(runner, id, repetitionCount, soundCount);
             validateResponse(runner, "{\n\"sound\": \"quack-quack, quack-quack\"\n}");
         }
-    }
-
-    public void createDuck(
-            TestCaseRunner runner,
-            String color,
-            double height,
-            String material,
-            String sound,
-            String wingsState
-    ) {
-        runner.$(
-                http()
-                        .client("http://localhost:2222")
-                        .send()
-                        .post("/api/duck/create")
-                        .message().contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .body("{\n" +
-                              "\"color\":\"" + color + "\",\n" +
-                              "\"height\":" + height + ",\n" +
-                              "\"material\":\"" + material + "\",\n" +
-                              "\"sound\":\"" + sound + "\",\n" +
-                              "\"wingsState\":\"" + wingsState + "\"\n" +
-                              "}")
-        );
-    }
-
-    public String extractIdDuckFromResponse(TestCaseRunner runner, TestContext context) {
-        runner.$(
-                http()
-                        .client("http://localhost:2222")
-                        .receive()
-                        .response(HttpStatus.OK)
-                        .message()
-                        .type(MessageType.JSON)
-                        .extract(fromBody().expression("$.id", "id"))
-        );
-        return context.getVariable("${id}");
-    }
-
-    public void getQuackDuck(TestCaseRunner runner, String id, int repetitionCount, int soundCount) {
-        runner.$(
-                http()
-                        .client("http://localhost:2222")
-                        .send()
-                        .get("/api/duck/action/quack")
-                        .queryParam("id", id)
-                        .queryParam("repetitionCount", String.valueOf(repetitionCount))
-                        .queryParam("soundCount", String.valueOf(soundCount)));
-
-    }
-
-    public void validateResponse(TestCaseRunner runner, String responseMessage) {
-        runner.$(
-                http()
-                        .client("http://localhost:2222")
-                        .receive()
-                        .response(HttpStatus.OK)
-                        .message()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .body(responseMessage)
-        );
     }
 }
