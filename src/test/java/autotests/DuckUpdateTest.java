@@ -14,7 +14,7 @@ import static com.consol.citrus.validation.DelegatingPayloadVariableExtractor.Bu
 
 public class DuckUpdateTest extends TestNGCitrusSpringSupport {
 
-    String id;
+//    String id;
 
     @Test(description = "Обновление параметров утки: высота и цвет")
     @CitrusTest
@@ -25,7 +25,7 @@ public class DuckUpdateTest extends TestNGCitrusSpringSupport {
         String sound = "qack";
         String wingsState = "ACTIVE";
         createDuck(runner, color, height, material, sound, wingsState);
-        id = extractIdDuckFromResponse(runner);
+        String id = extractIdDuckFromResponse(runner);
         updateDuck(runner, id,
                 "white",
                 3.5,
@@ -46,7 +46,7 @@ public class DuckUpdateTest extends TestNGCitrusSpringSupport {
         String sound = "qack";
         String wingsState = "ACTIVE";
         createDuck(runner, color, height, material, sound, wingsState);
-        id = extractIdDuckFromResponse(runner);
+        String id = extractIdDuckFromResponse(runner);
         updateDuck(runner, id,
                 "white",
                 1,
