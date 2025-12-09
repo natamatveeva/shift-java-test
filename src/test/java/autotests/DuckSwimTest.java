@@ -3,6 +3,7 @@ package autotests;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
+import com.consol.citrus.context.TestContext;
 import com.consol.citrus.message.MessageType;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.http.HttpStatus;
@@ -15,36 +16,31 @@ import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 public class DuckSwimTest extends TestNGCitrusSpringSupport {
 
-    String id;
+
 
     @Test(description = "Уточка плыви (существующий id)")
     @CitrusTest
-    public void successfulSwimRightId(@Optional @CitrusResource TestCaseRunner runner) {
+    public void successfulSwimRightId(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
+            TestContext context) {
         String color = "yellow";
         double height = 0.3;
         String material = "rubber";
         String sound = "qack";
         String wingsState = "FIXED";
         createDuck(runner, color, height, material, sound, wingsState);
-        id = extractIdDuckFromResponse(runner);
+        String id = extractIdDuckFromResponse(runner, context);
         swimDuck(runner, id);
-        validateResponse(runner, "{\n" +
-                                 "\"message\":" + "\"I'm swimming\"\n" +
-                                 "}");
-    }
+        validateResponseNotFound(runner, "{\n" +
+                                         "\"message\":" + "\"Paws are not found ((((\"\n" +
+                                         "}");}
     @Test(description = "Уточка плыви (несуществующий id)")
     @CitrusTest
-    public void successfulSwimWrongId(@Optional @CitrusResource TestCaseRunner runner) {
-        String color = "yellow";
-        double height = 0.3;
-        String material = "rubber";
-        String sound = "qack";
-        String wingsState = "ACTIVE";
-        createDuck(runner, color, height, material, sound, wingsState);
-        id = extractIdDuckFromResponse(runner);
-        swimDuck(runner, id);
-        validateResponse(runner, "{\n" +
-                                 "\"message\":" + "\"Paws are not found ((((\"\n" +
+    public void successfulSwimWrongId(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
+                                      TestContext context) {
+
+        swimDuck(runner, "0");
+        validateResponseNotFound(runner, "{\n" +
+                                  "\"message\":" + "\"Paws are not found ((((\"\n" +
                                  "}");
     }
 
@@ -63,20 +59,18 @@ public class DuckSwimTest extends TestNGCitrusSpringSupport {
                         .send()
                         .post("/api/duck/create")
                         .message()
-                        .body("{\n\"color\":\"" +
-                              color +
-                              "\",\n\"height\":" +
-                              height +
-                              "\",\n\"material\":" +
-                              material +
-                              "\",\n\"sound\":" +
-                              sound +
-                              "\",\n\"wingsState\":" +
-                              wingsState)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .body("{\n" +
+                              "\"color\":\"" + color + "\",\n" +
+                              "\"height\":" + height + ",\n" +
+                              "\"material\":\"" + material + "\",\n" +
+                              "\"sound\":\"" + sound + "\",\n" +
+                              "\"wingsState\":\"" + wingsState + "\"\n" +
+                              "}")
         );
     }
 
-    public String extractIdDuckFromResponse(TestCaseRunner runner) {
+    public String extractIdDuckFromResponse(TestCaseRunner runner, TestContext context) {
         runner.$(
                 http()
                         .client("http://localhost:2222")
@@ -84,9 +78,9 @@ public class DuckSwimTest extends TestNGCitrusSpringSupport {
                         .response(HttpStatus.OK)
                         .message()
                         .type(MessageType.JSON)
-                        .extract(fromBody().expression("$.id","id"))
+                        .extract(fromBody().expression("$.id", "id"))
         );
-        return "${id}";
+        return context.getVariable("${id}");
     }
 
     public void swimDuck(TestCaseRunner runner, String id) {
@@ -99,12 +93,23 @@ public class DuckSwimTest extends TestNGCitrusSpringSupport {
 
     }
 
-    public void validateResponse(TestCaseRunner runner, String responseMessage) {
+    public void validateResponseOk(TestCaseRunner runner, String responseMessage) {
         runner.$(
                 http()
                         .client("http://localhost:2222")
                         .receive()
                         .response(HttpStatus.OK)
+                        .message()
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .body(responseMessage)
+        );
+    }
+    public void validateResponseNotFound(TestCaseRunner runner, String responseMessage) {
+        runner.$(
+                http()
+                        .client("http://localhost:2222")
+                        .receive()
+                        .response(HttpStatus.NOT_FOUND)
                         .message()
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .body(responseMessage)
