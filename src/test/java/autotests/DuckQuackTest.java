@@ -3,6 +3,7 @@ package autotests;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
+import com.consol.citrus.context.TestContext;
 import com.consol.citrus.message.MessageType;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.http.HttpStatus;
@@ -15,48 +16,50 @@ import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 public class DuckQuackTest extends TestNGCitrusSpringSupport {
 
-    String id;
-
     @Test(description = "Тест издаваемого звука, если id четный")
     @CitrusTest
-    public void successefulQuackEvenNumbered(@Optional @CitrusResource TestCaseRunner runner) {
+    public void successefulQuackEvenNumbered(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
+                                             TestContext context) {
         String color = "yellow";
         double height = 0.3;
         String material = "rubber";
         String sound = "quack";
         String wingsState = "ACTIVE";
         createDuck(runner, color, height, material, sound, wingsState);
-        id = extractIdDuckFromResponse(runner);
+        String id = extractIdDuckFromResponse(runner, context);
         int repetitionCount = 2;
         int soundCount = 2;
         if (Integer.parseInt(id) % 2 == 0) {
-            getQuackDuck(runner, repetitionCount, soundCount);
+            getQuackDuck(runner, id, repetitionCount, soundCount);
             validateResponse(runner, "{\n\"sound\": \"moo-moo, moo-moo\"\n}");
         } else {
             createDuck(runner, color, height, material, sound, wingsState);
-            getQuackDuck(runner, repetitionCount, soundCount);
+            id = extractIdDuckFromResponse(runner, context);
+            getQuackDuck(runner, id, repetitionCount, soundCount);
             validateResponse(runner, "{\n\"sound\": \"moo-moo, moo-moo\"\n}");
         }
     }
 
     @Test(description = "Тест издаваемого звука, если id нечетный")
     @CitrusTest
-    public void successefulQuackOdd(@Optional @CitrusResource TestCaseRunner runner) {
+    public void successefulQuackOdd(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
+            TestContext context) {
         String color = "yellow";
         double height = 0.3;
         String material = "rubber";
         String sound = "quack";
         String wingsState = "ACTIVE";
         createDuck(runner, color, height, material, sound, wingsState);
-        id = extractIdDuckFromResponse(runner);
+        String id = extractIdDuckFromResponse(runner, context);
         int repetitionCount = 2;
         int soundCount = 2;
-        if (Integer.parseInt(id) % 2 == 0) {
-            getQuackDuck(runner, repetitionCount, soundCount);
+        if (Integer.parseInt(id) % 2 == 1) {
+            getQuackDuck(runner, id, repetitionCount, soundCount);
             validateResponse(runner, "{\n\"sound\": \"quack-quack, quack-quack\"\n}");
         } else {
             createDuck(runner, color, height, material, sound, wingsState);
-            getQuackDuck(runner, repetitionCount, soundCount);
+            id = extractIdDuckFromResponse(runner, context);
+            getQuackDuck(runner, id, repetitionCount, soundCount);
             validateResponse(runner, "{\n\"sound\": \"quack-quack, quack-quack\"\n}");
         }
     }
@@ -85,7 +88,7 @@ public class DuckQuackTest extends TestNGCitrusSpringSupport {
         );
     }
 
-    public String extractIdDuckFromResponse(TestCaseRunner runner) {
+    public String extractIdDuckFromResponse(TestCaseRunner runner, TestContext context) {
         runner.$(
                 http()
                         .client("http://localhost:2222")
@@ -95,10 +98,18 @@ public class DuckQuackTest extends TestNGCitrusSpringSupport {
                         .type(MessageType.JSON)
                         .extract(fromBody().expression("$.id", "id"))
         );
-        return "${id}";
+        return context.getVariable("${id}");
     }
 
-    public void getQuackDuck(TestCaseRunner runner, int repetitionCount, int soundCount) {
+    public void getQuackDuck(TestCaseRunner runner, String id, int repetitionCount, int soundCount) {
+        runner.$(
+                http()
+                        .client("http://localhost:2222")
+                        .send()
+                        .get("/api/duck/action/quack")
+                        .queryParam("id", id)
+                        .queryParam("repetitionCount", String.valueOf(repetitionCount))
+                        .queryParam("soundCount", String.valueOf(soundCount)));
 
     }
 
