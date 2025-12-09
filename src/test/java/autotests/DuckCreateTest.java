@@ -3,6 +3,7 @@ package autotests;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
+import com.consol.citrus.context.TestContext;
 import com.consol.citrus.message.MessageType;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.http.HttpStatus;
@@ -15,21 +16,19 @@ import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 public class DuckCreateTest extends TestNGCitrusSpringSupport {
 
-    String id;
+
 
     @Test(description = "Создание резиновой уточки")
     @CitrusTest
-    public void successfulRubberCreate(@Optional @CitrusResource TestCaseRunner runner) {
+    public void successfulRubberCreate(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
+                                       TestContext context) {
         String color = "yellow";
         double height = 0.3;
         String material = "rubber";
         String sound = "qack";
         String wingsState = "FIXED";
         createDuck(runner, color, height, material, sound, wingsState);
-        // тест ломается из-за того, что не получается вставить id правильно (так я это вижу)...
-        // как исправить не могу понять...
-        // причем такое же использование id в другом тесте проходит
-        id = extractIdDuckFromResponse(runner);
+        String id = extractIdDuckFromResponse(runner, context);
         validateResponse(runner, "{\n" +
                                  "\"id\":" + id + ",\n" +
                                  "\"color\":\"" + color + "\",\n" +
@@ -41,17 +40,15 @@ public class DuckCreateTest extends TestNGCitrusSpringSupport {
     }
         @Test(description = "Создание деревянной уточки")
         @CitrusTest
-        public void successfulWoodCreate(@Optional @CitrusResource TestCaseRunner runner) {
+        public void successfulWoodCreate(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
+                                         TestContext context) {
             String color = "yellow";
             double height = 0.3;
             String material = "wood";
             String sound = "qack";
             String wingsState = "FIXED";
             createDuck(runner, color, height, material, sound, wingsState);
-            id = extractIdDuckFromResponse(runner);
-            // тест ломается из-за того, что не получается вставить id правильно (так я это вижу)...
-            // как исправить не могу понять...
-            // причем такое же использование id в другом тесте проходит
+            String id = extractIdDuckFromResponse(runner, context);
             validateResponse(runner, "{\n" +
                                  "\"id\":\"" + id + ",\n" +
                                  "\"color\":\"" + color + "\",\n" +
@@ -86,7 +83,7 @@ public class DuckCreateTest extends TestNGCitrusSpringSupport {
                               "}")
         );
     }
-    public String extractIdDuckFromResponse(TestCaseRunner runner) {
+    public String extractIdDuckFromResponse(TestCaseRunner runner, TestContext context) {
         runner.$(
                 http()
                         .client("http://localhost:2222")
@@ -94,9 +91,9 @@ public class DuckCreateTest extends TestNGCitrusSpringSupport {
                         .response(HttpStatus.OK)
                         .message()
                         .type(MessageType.JSON)
-                        .extract(fromBody().expression("$.id","id"))
+                        .extract(fromBody().expression("$.id", "id"))
         );
-        return "${id}";
+        return context.getVariable("${id}");
     }
     public void validateResponse(TestCaseRunner runner, String responseMessage) {
         runner.$(
