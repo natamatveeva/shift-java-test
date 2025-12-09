@@ -51,7 +51,7 @@ public class DuckFlyTest extends TestNGCitrusSpringSupport {
 
     @Test(description = "Проверка полета с определенными крыльями")
     @CitrusTest
-    public void undefinedfulFly(@Optional @CitrusResource TestCaseRunner runner) {
+    public void undefinedFly(@Optional @CitrusResource TestCaseRunner runner) {
         String color = "yellow";
         double height = 0.3;
         String material = "rubber";
