@@ -3,11 +3,13 @@ package autotests;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
+import com.consol.citrus.context.TestContext;
 import com.consol.citrus.message.MessageType;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
@@ -15,21 +17,23 @@ import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 public class DuckPropertiesTest extends TestNGCitrusSpringSupport {
 
-    String id;
+//    String id;
 
     @Test(description = "Вывод параметров уточки (id целое четное)")
+    @Parameters({"runner", "context"})
     @CitrusTest
-    public void getPropertiesEvenNumbered(@Optional @CitrusResource TestCaseRunner runner) {
+    public void getPropertiesEvenNumbered(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
+            TestContext context) {
         String color = "yellow";
-        double height = 0.3;
+        double height = 1.0;
         String material = "rubber";
         String sound = "qack";
         String wingsState = "ACTIVE";
         createDuck(runner, color, height, material, sound, wingsState);
-        id = extractIdDuckFromResponse(runner);
+        String id = extractIdDuckFromResponse(runner, context);
         String responseMessage = "{\n" +
                                  "\"color\":\"" + color + "\",\n" +
-                                 "\"height\":" + height + ",\n" +
+                                 "\"height\":" + 100.0 + ",\n" +
                                  "\"material\":\"" + material + "\",\n" +
                                  "\"sound\":\"" + sound + "\",\n" +
                                  "\"wingsState\":\"" + wingsState + "\"\n" +
@@ -39,7 +43,7 @@ public class DuckPropertiesTest extends TestNGCitrusSpringSupport {
             validateResponse(runner, responseMessage);
         } else {
             createDuck(runner, color, height, material, sound, wingsState);
-            id = extractIdDuckFromResponse(runner);
+            id = extractIdDuckFromResponse(runner, context);
             getPropertiesDuck(runner, id);
             validateResponse(runner, responseMessage);
         }
@@ -47,21 +51,28 @@ public class DuckPropertiesTest extends TestNGCitrusSpringSupport {
 
     @Test(description = "Вывод параметров уточки (id целое нечетное)")
     @CitrusTest
-    public void getPropertiesOdd(@Optional @CitrusResource TestCaseRunner runner) {
+    public void getPropertiesOdd(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
+            TestContext context) {
         String color = "yellow";
-        double height = 0.3;
+        double height = 1.0;
         String material = "rubber";
         String sound = "qack";
         String wingsState = "ACTIVE";
         createDuck(runner, color, height, material, sound, wingsState);
-        id = extractIdDuckFromResponse(runner);
-        String responseMessage = "{}";
+        String id = extractIdDuckFromResponse(runner, context);
+        String responseMessage = "{\n" +
+                                 "\"color\":\"" + color + "\",\n" +
+                                 "\"height\":" + 100.0 + ",\n" +
+                                 "\"material\":\"" + material + "\",\n" +
+                                 "\"sound\":\"" + sound + "\",\n" +
+                                 "\"wingsState\":\"" + wingsState + "\"\n" +
+                                 "}";;
         if (Integer.parseInt(id) % 2 == 1) {
             getPropertiesDuck(runner, id);
             validateResponse(runner, responseMessage);
         } else {
             createDuck(runner, color, height, material, sound, wingsState);
-            id = extractIdDuckFromResponse(runner);
+            id = extractIdDuckFromResponse(runner, context);
             getPropertiesDuck(runner, id);
             validateResponse(runner, responseMessage);
         }
@@ -91,7 +102,7 @@ public class DuckPropertiesTest extends TestNGCitrusSpringSupport {
         );
     }
 
-    public String extractIdDuckFromResponse(TestCaseRunner runner) {
+    public String extractIdDuckFromResponse(TestCaseRunner runner, TestContext context) {
         runner.$(
                 http()
                         .client("http://localhost:2222")
@@ -101,7 +112,7 @@ public class DuckPropertiesTest extends TestNGCitrusSpringSupport {
                         .type(MessageType.JSON)
                         .extract(fromBody().expression("$.id", "id"))
         );
-        return "${id}";
+        return context.getVariable("${id}");
     }
 
     public void getPropertiesDuck(TestCaseRunner runner, String id) {

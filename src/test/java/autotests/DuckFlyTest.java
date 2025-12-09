@@ -15,7 +15,7 @@ import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 public class DuckFlyTest extends TestNGCitrusSpringSupport {
 
-    String id;
+
 
     @Test(description = "Проверка полета с активными крыльями")
     @CitrusTest
@@ -26,7 +26,7 @@ public class DuckFlyTest extends TestNGCitrusSpringSupport {
         String sound = "qack";
         String wingsState = "ACTIVE";
         createDuck(runner, color, height, material, sound, wingsState);
-        id = extractIdDuckFromResponse(runner);
+        String id = extractIdDuckFromResponse(runner);
         flyDuck(runner, id);
         validateResponse(runner, "{\n" +
                                  "\"message\":" + "\"I am flying :)\"\n" +
@@ -42,7 +42,7 @@ public class DuckFlyTest extends TestNGCitrusSpringSupport {
         String sound = "qack";
         String wingsState = "FIXED";
         createDuck(runner, color, height, material, sound, wingsState);
-        id = extractIdDuckFromResponse(runner);
+        String id = extractIdDuckFromResponse(runner);
         flyDuck(runner, id);
         validateResponse(runner, "{\n" +
                                  "\"message\":" + "\"I can not fly :C\"\n" +
@@ -58,7 +58,7 @@ public class DuckFlyTest extends TestNGCitrusSpringSupport {
         String sound = "qack";
         String wingsState = "UNDEFINED";
         createDuck(runner, color, height, material, sound, wingsState);
-        id = extractIdDuckFromResponse(runner);
+        String id = extractIdDuckFromResponse(runner);
         flyDuck(runner, id);
         validateResponse(runner, "{\n" +
                                  "\"message\":" + "\"Wings are not detected :(\"\n" +
