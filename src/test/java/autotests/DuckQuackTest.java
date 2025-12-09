@@ -30,11 +30,11 @@ public class DuckQuackTest extends TestNGCitrusSpringSupport {
         int repetitionCount = 2;
         int soundCount = 2;
         if (Integer.parseInt(id) % 2 == 0) {
-            getQuackDuck(runner, repetitionCount, soundCount);
+            getQuackDuck(runner, id, repetitionCount, soundCount);
             validateResponse(runner, "{\n\"sound\": \"moo-moo, moo-moo\"\n}");
         } else {
             createDuck(runner, color, height, material, sound, wingsState);
-            getQuackDuck(runner, repetitionCount, soundCount);
+            getQuackDuck(runner, id, repetitionCount, soundCount);
             validateResponse(runner, "{\n\"sound\": \"moo-moo, moo-moo\"\n}");
         }
     }
@@ -52,11 +52,11 @@ public class DuckQuackTest extends TestNGCitrusSpringSupport {
         int repetitionCount = 2;
         int soundCount = 2;
         if (Integer.parseInt(id) % 2 == 0) {
-            getQuackDuck(runner, repetitionCount, soundCount);
+            getQuackDuck(runner, id, repetitionCount, soundCount);
             validateResponse(runner, "{\n\"sound\": \"quack-quack, quack-quack\"\n}");
         } else {
             createDuck(runner, color, height, material, sound, wingsState);
-            getQuackDuck(runner, repetitionCount, soundCount);
+            getQuackDuck(runner, id, repetitionCount, soundCount);
             validateResponse(runner, "{\n\"sound\": \"quack-quack, quack-quack\"\n}");
         }
     }
@@ -98,7 +98,15 @@ public class DuckQuackTest extends TestNGCitrusSpringSupport {
         return "${id}";
     }
 
-    public void getQuackDuck(TestCaseRunner runner, int repetitionCount, int soundCount) {
+    public void getQuackDuck(TestCaseRunner runner, String id, int repetitionCount, int soundCount) {
+        runner.$(
+                http()
+                        .client("http://localhost:2222")
+                        .send()
+                        .get("/api/duck/action/quack")
+                        .queryParam("id", id)
+                        .queryParam("repetitionCount", String.valueOf(repetitionCount))
+                        .queryParam("soundCount", String.valueOf(soundCount)));
 
     }
 
