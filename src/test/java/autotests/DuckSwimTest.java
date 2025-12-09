@@ -1,5 +1,6 @@
 package autotests;
 
+import autotests.clients.DuckActionsClient;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
@@ -14,14 +15,12 @@ import org.testng.annotations.Test;
 import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
-public class DuckSwimTest extends TestNGCitrusSpringSupport {
-
-
+public class DuckSwimTest extends DuckActionsClient {
 
     @Test(description = "Уточка плыви (существующий id)")
     @CitrusTest
-    public void successfulSwimRightId(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
-            TestContext context) {
+    public void successfulSwimRightId(@Optional @CitrusResource TestCaseRunner runner,
+                                      @Optional @CitrusResource TestContext context) {
         String color = "yellow";
         double height = 0.3;
         String material = "rubber";
@@ -30,89 +29,17 @@ public class DuckSwimTest extends TestNGCitrusSpringSupport {
         createDuck(runner, color, height, material, sound, wingsState);
         String id = extractIdDuckFromResponse(runner, context);
         swimDuck(runner, id);
-        validateResponseNotFound(runner, "{\n" +
+        validateResponse(runner, "{\n" +
                                          "\"message\":" + "\"Paws are not found ((((\"\n" +
                                          "}");}
+
     @Test(description = "Уточка плыви (несуществующий id)")
     @CitrusTest
-    public void successfulSwimWrongId(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
-                                      TestContext context) {
-
+    public void successfulSwimWrongId(@Optional @CitrusResource TestCaseRunner runner,
+                                      @Optional @CitrusResource TestContext context) {
         swimDuck(runner, "0");
-        validateResponseNotFound(runner, "{\n" +
+        validateResponse(runner, "{\n" +
                                   "\"message\":" + "\"Paws are not found ((((\"\n" +
                                  "}");
-    }
-
-    //---
-    public void createDuck(
-            TestCaseRunner runner,
-            String color,
-            double height,
-            String material,
-            String sound,
-            String wingsState
-    ) {
-        runner.$(
-                http()
-                        .client("http://localhost:2222")
-                        .send()
-                        .post("/api/duck/create")
-                        .message()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .body("{\n" +
-                              "\"color\":\"" + color + "\",\n" +
-                              "\"height\":" + height + ",\n" +
-                              "\"material\":\"" + material + "\",\n" +
-                              "\"sound\":\"" + sound + "\",\n" +
-                              "\"wingsState\":\"" + wingsState + "\"\n" +
-                              "}")
-        );
-    }
-
-    public String extractIdDuckFromResponse(TestCaseRunner runner, TestContext context) {
-        runner.$(
-                http()
-                        .client("http://localhost:2222")
-                        .receive()
-                        .response(HttpStatus.OK)
-                        .message()
-                        .type(MessageType.JSON)
-                        .extract(fromBody().expression("$.id", "id"))
-        );
-        return context.getVariable("${id}");
-    }
-
-    public void swimDuck(TestCaseRunner runner, String id) {
-        runner.$(
-                http()
-                        .client("http://localhost:2222")
-                        .send()
-                        .get("/api/duck/action/swim")
-                        .queryParam("id", id));
-
-    }
-
-    public void validateResponseOk(TestCaseRunner runner, String responseMessage) {
-        runner.$(
-                http()
-                        .client("http://localhost:2222")
-                        .receive()
-                        .response(HttpStatus.OK)
-                        .message()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .body(responseMessage)
-        );
-    }
-    public void validateResponseNotFound(TestCaseRunner runner, String responseMessage) {
-        runner.$(
-                http()
-                        .client("http://localhost:2222")
-                        .receive()
-                        .response(HttpStatus.NOT_FOUND)
-                        .message()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .body(responseMessage)
-        );
     }
 }
