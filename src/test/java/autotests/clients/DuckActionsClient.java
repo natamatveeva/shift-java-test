@@ -2,6 +2,7 @@ package autotests.clients;
 
 import autotests.tests.EndpointConfig;
 import com.consol.citrus.TestCaseRunner;
+import com.consol.citrus.context.TestContext;
 import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.message.MessageType;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
@@ -120,14 +121,14 @@ public class DuckActionsClient extends TestNGCitrusSpringSupport {
                 http()
                         .client(duckService)
                         .receive()
-                        .response(HttpStatus.OK)
+                        .response()
                         .message()
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .body(responseMessage)
         );
     }
 
-    public String extractIdDuckFromResponse(TestCaseRunner runner) {
+    public String extractIdDuckFromResponse(TestCaseRunner runner, TestContext context) {
         runner.$(
                 http()
                         .client(duckService)
@@ -137,6 +138,6 @@ public class DuckActionsClient extends TestNGCitrusSpringSupport {
                         .type(MessageType.JSON)
                         .extract(fromBody().expression("$.id", "id"))
         );
-        return "${id}";
+        return context.getVariable("${id}");
     }
 }
