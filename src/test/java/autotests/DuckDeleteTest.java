@@ -4,6 +4,7 @@ import autotests.clients.DuckActionsClient;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
+import com.consol.citrus.context.TestContext;
 import com.consol.citrus.message.MessageType;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.http.HttpStatus;
@@ -18,14 +19,15 @@ public class DuckDeleteTest extends DuckActionsClient {
 
     @Test(description="Удаление утки")
     @CitrusTest
-    public void successfulDelete(@Optional @CitrusResource TestCaseRunner runner) {
+    public void successfulDelete(@Optional @CitrusResource TestCaseRunner runner,
+                                 @Optional @CitrusResource TestContext context) {
         String color = "yellow";
         double height = 0.3;
         String material = "rubber";
         String sound = "qack";
         String wingsState = "FIXED";
         createDuck(runner, color, height, material, sound, wingsState);
-        String id = extractIdDuckFromResponse(runner);
+        String id = extractIdDuckFromResponse(runner, context);
         deleteDuck(runner, id);
         validateResponse(runner, "{\n" +
                                  "\"message\":" + "\"Duck is deleted\"\n" +
