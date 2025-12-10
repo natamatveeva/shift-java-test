@@ -1,6 +1,7 @@
 package autotests;
 
 import autotests.clients.DuckActionsClient;
+import autotests.payloads.DuckPropertiesCreate;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
@@ -21,12 +22,13 @@ public class DuckSwimTest extends DuckActionsClient {
     @CitrusTest
     public void successfulSwimRightId(@Optional @CitrusResource TestCaseRunner runner,
                                       @Optional @CitrusResource TestContext context) {
-        String color = "yellow";
-        double height = 0.3;
-        String material = "rubber";
-        String sound = "qack";
-        String wingsState = "FIXED";
-        createDuck(runner, color, height, material, sound, wingsState);
+        DuckPropertiesCreate duckProperties = new DuckPropertiesCreate()
+                .color("yellow")
+                .height(0.3)
+                .material("rubber")
+                .sound("quack")
+                .wingsState(DuckPropertiesCreate.WingsState.ACTIVE);
+        createDuck(runner, duckProperties);
         String id = extractIdDuckFromResponse(runner, context);
         swimDuck(runner, id);
         validateResponse(runner, "{\n" +
