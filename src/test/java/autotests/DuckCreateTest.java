@@ -20,43 +20,25 @@ public class DuckCreateTest extends TestNGCitrusSpringSupport {
 
     @Test(description = "Создание резиновой уточки")
     @CitrusTest
-    public void successfulRubberCreate(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
-                                       TestContext context) {
+    public void successfulRubberCreate(@Optional @CitrusResource TestCaseRunner runner) {
         String color = "yellow";
         double height = 0.3;
         String material = "rubber";
         String sound = "qack";
         String wingsState = "FIXED";
         createDuck(runner, color, height, material, sound, wingsState);
-        String id = extractIdDuckFromResponse(runner, context);
-        validateResponse(runner, "{\n" +
-                                 "\"id\":" + id + ",\n" +
-                                 "\"color\":\"" + color + "\",\n" +
-                                 "\"height\":" + height + ",\n" +
-                                 "\"material\":\"" + material + "\",\n" +
-                                 "\"sound\":\"" + sound + "\",\n" +
-                                 "\"wingsState\":\"" + wingsState + "\"\n" +
-                                 "}");
+        validateResponseCreate(runner, color, height, material, sound, wingsState);
     }
         @Test(description = "Создание деревянной уточки")
         @CitrusTest
-        public void successfulWoodCreate(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
-                                         TestContext context) {
+        public void successfulWoodCreate(@Optional @CitrusResource TestCaseRunner runner) {
             String color = "yellow";
             double height = 0.3;
             String material = "wood";
             String sound = "qack";
             String wingsState = "FIXED";
             createDuck(runner, color, height, material, sound, wingsState);
-            String id = extractIdDuckFromResponse(runner, context);
-            validateResponse(runner, "{\n" +
-                                 "\"id\":\"" + id + ",\n" +
-                                 "\"color\":\"" + color + "\",\n" +
-                                 "\"height\":" + height + ",\n" +
-                                 "\"material\":\"" + material + "\",\n" +
-                                 "\"sound\":\"" + sound + "\",\n" +
-                                 "\"wingsState\":\"" + wingsState + "\"\n" +
-                                 "}");
+            validateResponseCreate(runner, color, height, material, sound, wingsState);
     }
 
     public void createDuck(
@@ -95,15 +77,24 @@ public class DuckCreateTest extends TestNGCitrusSpringSupport {
         );
         return context.getVariable("${id}");
     }
-    public void validateResponse(TestCaseRunner runner, String responseMessage) {
+    public void validateResponseCreate(TestCaseRunner runner,
+                                       String color, double height, String material,
+                                       String sound, String wingsState) {
         runner.$(
                 http()
                         .client("http://localhost:2222")
                         .receive()
-                        .response(HttpStatus.OK)
+                        .response()
                         .message()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .body(responseMessage)
+                        .type(MessageType.JSON)
+                        .body("{\n" +
+                              "\"id\":" + "\"@ignore@\"" + ",\n" +
+                              "\"color\":\"" + color + "\",\n" +
+                              "\"height\":" + height + ",\n" +
+                              "\"material\":\"" + material + "\",\n" +
+                              "\"sound\":\"" + sound + "\",\n" +
+                              "\"wingsState\":\"" + wingsState + "\"\n" +
+                              "}")
         );
     }
 }
