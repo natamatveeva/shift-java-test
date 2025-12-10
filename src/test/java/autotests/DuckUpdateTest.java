@@ -1,6 +1,7 @@
 package autotests.duck_controller;
 
 import autotests.clients.DuckActionsClient;
+import autotests.payloads.DuckPropertiesCreate;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
@@ -21,12 +22,13 @@ public class DuckUpdateTest extends DuckActionsClient {
     public void updateDuckParametersColorHeight(@Optional @CitrusResource TestCaseRunner runner,
                                                 @Optional @CitrusResource TestContext context
                                                 ) {
-        String color = "black";
-        double height = 0.5;
-        String material = "rubber";
-        String sound = "qack";
-        String wingsState = "ACTIVE";
-        createDuck(runner, color, height, material, sound, wingsState);
+        DuckPropertiesCreate duckProperties = new DuckPropertiesCreate()
+                .color("yellow")
+                .height(0.3)
+                .material("rubber")
+                .sound("quack")
+                .wingsState(DuckPropertiesCreate.WingsState.ACTIVE);
+        createDuck(runner, duckProperties);
         String id = extractIdDuckFromResponse(runner, context);
         updateDuck(runner, id,
                 "white",
@@ -43,12 +45,13 @@ public class DuckUpdateTest extends DuckActionsClient {
     @CitrusTest
     public void updateDuckParametersColorSound(@Optional @CitrusResource TestCaseRunner runner,
                                                @Optional @CitrusResource TestContext context) {
-        String color = "violet";
-        double height = 1;
-        String material = "metall";
-        String sound = "qack";
-        String wingsState = "ACTIVE";
-        createDuck(runner, color, height, material, sound, wingsState);
+        DuckPropertiesCreate duckProperties = new DuckPropertiesCreate()
+                .color("yellow")
+                .height(0.3)
+                .material("rubber")
+                .sound("quack")
+                .wingsState(DuckPropertiesCreate.WingsState.ACTIVE);
+        createDuck(runner, duckProperties);
         String id = extractIdDuckFromResponse(runner, context);
         updateDuck(runner, id,
                 "white",
