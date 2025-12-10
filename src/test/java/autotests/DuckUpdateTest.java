@@ -2,6 +2,7 @@ package autotests.duck_controller;
 
 import autotests.clients.DuckActionsClient;
 import autotests.payloads.DuckPropertiesCreate;
+import autotests.payloads.ResponseMessage;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
@@ -36,9 +37,9 @@ public class DuckUpdateTest extends DuckActionsClient {
                 "rubber",
                 "quack",
                 "ACTIVE");
-        validateResponse(runner, "{\n" +
-                                 "\"message\": \"Duck with id = " + id + " is updated\"\n" +
-                                 "}");
+        ResponseMessage message = new ResponseMessage()
+                .message("{\n\"message\": \"Duck with id = " + id + " is updated\"\n}");
+        validateResponse(runner, message.message());
     }
 
     @Test(description = "Обновление параметров утки: цвет и звук")
