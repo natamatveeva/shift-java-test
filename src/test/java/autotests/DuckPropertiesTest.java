@@ -62,7 +62,7 @@ public class DuckPropertiesTest extends DuckActionsClient {
                 .material("rubber")
                 .sound("quack")
                 .wingsState(DuckPropertiesCreate.WingsState.ACTIVE);
-        createDuck(runner, duckService);
+        createDuck(runner, duckProperties);
         String id = extractIdDuckFromResponse(runner, context);
         String responseMessage = "{\n" +
                                  "\"color\": \"yellow\",\n" +
