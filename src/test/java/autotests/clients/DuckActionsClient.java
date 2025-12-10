@@ -128,6 +128,27 @@ public class DuckActionsClient extends TestNGCitrusSpringSupport {
         );
     }
 
+    public void validateResponseCreate(TestCaseRunner runner, TestContext context,
+                                       String color, double height, String material,
+                                       String sound, String wingsState) {
+        runner.$(
+                http()
+                        .client(duckService)
+                        .receive()
+                        .response()
+                        .message()
+                        .type(MessageType.JSON)
+                        .body("{\n" +
+                              "\"id\":" + "\"@ignore@\"" + ",\n" +
+                              "\"color\":\"" + color + "\",\n" +
+                              "\"height\":" + height + ",\n" +
+                              "\"material\":\"" + material + "\",\n" +
+                              "\"sound\":\"" + sound + "\",\n" +
+                              "\"wingsState\":\"" + wingsState + "\"\n" +
+                              "}")
+        );
+    }
+
     public String extractIdDuckFromResponse(TestCaseRunner runner, TestContext context) {
         runner.$(
                 http()
