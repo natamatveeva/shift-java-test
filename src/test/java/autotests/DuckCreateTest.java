@@ -29,7 +29,7 @@ public class DuckCreateTest extends DuckActionsClient {
         DuckPropertiesCreate duckProperties = new DuckPropertiesCreate()
                 .color("yellow")
                 .height(0.3)
-                .material("rubber")
+                .material("wood")
                 .sound("quack")
                 .wingsState(DuckPropertiesCreate.WingsState.FIXED);
         createDuck(runner, duckProperties);
