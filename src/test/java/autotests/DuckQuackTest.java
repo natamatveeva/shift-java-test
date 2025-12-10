@@ -1,6 +1,7 @@
 package autotests;
 
 import autotests.clients.DuckActionsClient;
+import autotests.payloads.DuckPropertiesCreate;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
@@ -21,12 +22,13 @@ public class DuckQuackTest extends DuckActionsClient {
     @CitrusTest
     public void successefulQuackEvenNumbered(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
                                              TestContext context) {
-        String color = "yellow";
-        double height = 0.3;
-        String material = "rubber";
-        String sound = "quack";
-        String wingsState = "ACTIVE";
-        createDuck(runner, color, height, material, sound, wingsState);
+        DuckPropertiesCreate duckProperties = new DuckPropertiesCreate()
+                .color("yellow")
+                .height(0.3)
+                .material("rubber")
+                .sound("quack")
+                .wingsState(DuckPropertiesCreate.WingsState.ACTIVE);
+        createDuck(runner, duckProperties);
         String id = extractIdDuckFromResponse(runner, context);
         int repetitionCount = 2;
         int soundCount = 2;
@@ -34,7 +36,7 @@ public class DuckQuackTest extends DuckActionsClient {
             getQuackDuck(runner, id, repetitionCount, soundCount);
             validateResponse(runner, "{\n\"sound\": \"moo-moo, moo-moo\"\n}");
         } else {
-            createDuck(runner, color, height, material, sound, wingsState);
+            createDuck(runner, duckProperties);
             id = extractIdDuckFromResponse(runner, context);
             getQuackDuck(runner, id, repetitionCount, soundCount);
             validateResponse(runner, "{\n\"sound\": \"moo-moo, moo-moo\"\n}");
@@ -45,12 +47,13 @@ public class DuckQuackTest extends DuckActionsClient {
     @CitrusTest
     public void successefulQuackOdd(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
             TestContext context) {
-        String color = "yellow";
-        double height = 0.3;
-        String material = "rubber";
-        String sound = "quack";
-        String wingsState = "ACTIVE";
-        createDuck(runner, color, height, material, sound, wingsState);
+        DuckPropertiesCreate duckProperties = new DuckPropertiesCreate()
+                .color("yellow")
+                .height(0.3)
+                .material("rubber")
+                .sound("quack")
+                .wingsState(DuckPropertiesCreate.WingsState.ACTIVE);
+        createDuck(runner, duckProperties);
         String id = extractIdDuckFromResponse(runner, context);
         int repetitionCount = 2;
         int soundCount = 2;
@@ -58,7 +61,7 @@ public class DuckQuackTest extends DuckActionsClient {
             getQuackDuck(runner, id, repetitionCount, soundCount);
             validateResponse(runner, "{\n\"sound\": \"quack-quack, quack-quack\"\n}");
         } else {
-            createDuck(runner, color, height, material, sound, wingsState);
+            createDuck(runner, duckProperties);
             id = extractIdDuckFromResponse(runner, context);
             getQuackDuck(runner, id, repetitionCount, soundCount);
             validateResponse(runner, "{\n\"sound\": \"quack-quack, quack-quack\"\n}");
