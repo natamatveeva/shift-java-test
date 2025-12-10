@@ -1,11 +1,14 @@
 package autotests.clients;
 
+import autotests.payloads.DuckPropertiesCreate;
 import autotests.tests.EndpointConfig;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.message.MessageType;
+import com.consol.citrus.message.builder.ObjectMappingPayloadBuilder;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,27 +23,14 @@ public class DuckActionsClient extends TestNGCitrusSpringSupport {
     @Autowired
     protected HttpClient duckService;
 
-    public void createDuck(
-            TestCaseRunner runner,
-            String color,
-            double height,
-            String material,
-            String sound,
-            String wingsState
-    ) {
+    public void createDuck(TestCaseRunner runner, Object duckProperties) {
         runner.$(
                 http()
                         .client(duckService)
                         .send()
                         .post("/api/duck/create")
                         .message().contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .body("{\n" +
-                              "\"color\":\"" + color + "\",\n" +
-                              "\"height\":" + height + ",\n" +
-                              "\"material\":\"" + material + "\",\n" +
-                              "\"sound\":\"" + sound + "\",\n" +
-                              "\"wingsState\":\"" + wingsState + "\"\n" +
-                              "}")
+                        .body(new ObjectMappingPayloadBuilder(duckProperties, new ObjectMapper()))
         );
     }
 
@@ -130,7 +120,7 @@ public class DuckActionsClient extends TestNGCitrusSpringSupport {
 
     public void validateResponseCreate(TestCaseRunner runner,
                                        String color, double height, String material,
-                                       String sound, String wingsState) {
+                                       String sound, DuckPropertiesCreate.WingsState wingsState) {
         runner.$(
                 http()
                         .client(duckService)
