@@ -1,6 +1,7 @@
 package autotests;
 
 import autotests.clients.DuckActionsClient;
+import autotests.payloads.DuckPropertiesCreate;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
@@ -24,25 +25,26 @@ public class DuckPropertiesTest extends DuckActionsClient {
     public void getPropertiesEvenNumbered(@Optional @CitrusResource TestCaseRunner runner,
                                           @Optional @CitrusResource TestContext context
     ) {
-        String color = "yellow";
-        double height = 1.0;
-        String material = "rubber";
-        String sound = "qack";
-        String wingsState = "ACTIVE";
-        createDuck(runner, color, height, material, sound, wingsState);
+        DuckPropertiesCreate duckProperties = new DuckPropertiesCreate()
+                .color("yellow")
+                .height(0.3)
+                .material("rubber")
+                .sound("quack")
+                .wingsState(DuckPropertiesCreate.WingsState.FIXED);
+        createDuck(runner, duckProperties);
         String id = extractIdDuckFromResponse(runner, context);
         String responseMessage = "{\n" +
-                                 "\"color\":\"" + color + "\",\n" +
-                                 "\"height\":" + 100.0 + ",\n" +
-                                 "\"material\":\"" + material + "\",\n" +
-                                 "\"sound\":\"" + sound + "\",\n" +
-                                 "\"wingsState\":\"" + wingsState + "\"\n" +
+                                 "\"color\": \"yellow\",\n" +
+                                 "\"height\": " + 30.0 + ",\n" +
+                                 "\"material\": \"rubber\",\n" +
+                                 "\"sound\": \"quack\",\n" +
+                                 "\"wingsState\": \"FIXED\"\n" +
                                  "}";
         if (Integer.parseInt(id) % 2 == 0) {
             getPropertiesDuck(runner, id);
             validateResponse(runner, responseMessage);
         } else {
-            createDuck(runner, color, height, material, sound, wingsState);
+            createDuck(runner, duckProperties);
             id = extractIdDuckFromResponse(runner, context);
             getPropertiesDuck(runner, id);
             validateResponse(runner, responseMessage);
@@ -54,26 +56,26 @@ public class DuckPropertiesTest extends DuckActionsClient {
     public void getPropertiesOdd(@Optional @CitrusResource TestCaseRunner runner,
                                  @Optional @CitrusResource TestContext context
     ) {
-        String color = "yellow";
-        double height = 1.0;
-        String material = "rubber";
-        String sound = "qack";
-        String wingsState = "ACTIVE";
-        createDuck(runner, color, height, material, sound, wingsState);
+        DuckPropertiesCreate duckProperties = new DuckPropertiesCreate()
+                .color("yellow")
+                .height(0.3)
+                .material("rubber")
+                .sound("quack")
+                .wingsState(DuckPropertiesCreate.WingsState.ACTIVE);
+        createDuck(runner, duckService);
         String id = extractIdDuckFromResponse(runner, context);
         String responseMessage = "{\n" +
-                                 "\"color\":\"" + color + "\",\n" +
-                                 "\"height\":" + 100.0 + ",\n" +
-                                 "\"material\":\"" + material + "\",\n" +
-                                 "\"sound\":\"" + sound + "\",\n" +
-                                 "\"wingsState\":\"" + wingsState + "\"\n" +
+                                 "\"color\": \"yellow\",\n" +
+                                 "\"height\": " + 30.0 + ",\n" +
+                                 "\"material\": \"rubber\",\n" +
+                                 "\"sound\": \"quack\",\n" +
+                                 "\"wingsState\": \"ACTIVE\"\n" +
                                  "}";
-        ;
         if (Integer.parseInt(id) % 2 == 1) {
             getPropertiesDuck(runner, id);
             validateResponse(runner, responseMessage);
         } else {
-            createDuck(runner, color, height, material, sound, wingsState);
+            createDuck(runner, duckProperties);
             id = extractIdDuckFromResponse(runner, context);
             getPropertiesDuck(runner, id);
             validateResponse(runner, responseMessage);
