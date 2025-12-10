@@ -28,15 +28,7 @@ public class DuckCreateTest extends DuckActionsClient {
         String sound = "quack";
         String wingsState = "FIXED";
         createDuck(runner, color, height, material, sound, wingsState);
-        String id = extractIdDuckFromResponse(runner, context);
-        validateResponse(runner, "{\n" +
-                                 "\"id\":" + id + ",\n" +
-                                 "\"color\":\"" + color + "\",\n" +
-                                 "\"height\":" + height + ",\n" +
-                                 "\"material\":\"" + material + "\",\n" +
-                                 "\"sound\":\"" + sound + "\",\n" +
-                                 "\"wingsState\":\"" + wingsState + "\"\n" +
-                                 "}");
+        validateResponseCreate(runner, context, color, height, material, sound, wingsState);
     }
 
     @Test(description = "Создание деревянной уточки")
@@ -51,13 +43,6 @@ public class DuckCreateTest extends DuckActionsClient {
         String wingsState = "FIXED";
         createDuck(runner, color, height, material, sound, wingsState);
         String id = extractIdDuckFromResponse(runner, context);
-        validateResponse(runner, "{\n" +
-                             "\"id\":\"" + id + ",\n" +
-                             "\"color\":\"" + color + "\",\n" +
-                             "\"height\":" + height + ",\n" +
-                             "\"material\":\"" + material + "\",\n" +
-                             "\"sound\":\"" + sound + "\",\n" +
-                             "\"wingsState\":\"" + wingsState + "\"\n" +
-                             "}");
+        validateResponseCreate(runner, context, color, height, material, sound, wingsState);
     }
 }
