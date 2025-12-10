@@ -20,7 +20,7 @@ public class DuckCreateTest extends DuckActionsClient {
                 .sound("quack")
                 .wingsState(DuckPropertiesCreate.WingsState.FIXED);
         createDuck(runner, duckProperties);
-        validateResponseCreate(runner, "yellow", 0.3, "rubber", "quack", DuckPropertiesCreate.WingsState.FIXED);
+        validateResponseCreateResourses(runner, "DuckActionsTest/duckPropertiesValidate.json");
     }
 
     @Test(description = "Создание деревянной уточки")

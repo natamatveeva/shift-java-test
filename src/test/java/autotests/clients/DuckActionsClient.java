@@ -10,6 +10,7 @@ import com.consol.citrus.message.builder.ObjectMappingPayloadBuilder;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -137,6 +138,17 @@ public class DuckActionsClient extends TestNGCitrusSpringSupport {
                               "\"wingsState\":\"" + wingsState + "\"\n" +
                               "}")
         );
+    }
+
+    public void validateResponseCreateResourses(TestCaseRunner runner, String resourcePath) {
+        runner.$(
+                http()
+                        .client(duckService)
+                        .receive()
+                        .response(HttpStatus.OK)
+                        .message()
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .body(new ClassPathResource(resourcePath)));
     }
 
     public String extractIdDuckFromResponse(TestCaseRunner runner, TestContext context) {
