@@ -19,8 +19,7 @@ public class DuckCreateTest extends DuckActionsClient {
 
     @Test(description = "Создание резиновой уточки")
     @CitrusTest
-    public void successfulRubberCreate(@Optional @CitrusResource TestCaseRunner runner,
-                                       @Optional @CitrusResource TestContext context
+    public void successfulRubberCreate(@Optional @CitrusResource TestCaseRunner runner
                                       ) {
         String color = "yellow";
         double height = 0.3;
@@ -28,13 +27,12 @@ public class DuckCreateTest extends DuckActionsClient {
         String sound = "quack";
         String wingsState = "FIXED";
         createDuck(runner, color, height, material, sound, wingsState);
-        validateResponseCreate(runner, context, color, height, material, sound, wingsState);
+        validateResponseCreate(runner, color, height, material, sound, wingsState);
     }
 
     @Test(description = "Создание деревянной уточки")
     @CitrusTest
-    public void successfulWoodCreate(@Optional @CitrusResource TestCaseRunner runner,
-                                     @Optional @CitrusResource TestContext context
+    public void successfulWoodCreate(@Optional @CitrusResource TestCaseRunner runner
                                     ) {
         String color = "yellow";
         double height = 0.3;
@@ -42,7 +40,6 @@ public class DuckCreateTest extends DuckActionsClient {
         String sound = "quack";
         String wingsState = "FIXED";
         createDuck(runner, color, height, material, sound, wingsState);
-        String id = extractIdDuckFromResponse(runner, context);
-        validateResponseCreate(runner, context, color, height, material, sound, wingsState);
+        validateResponseCreate(runner, color, height, material, sound, wingsState);
     }
 }

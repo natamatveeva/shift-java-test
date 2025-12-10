@@ -128,7 +128,7 @@ public class DuckActionsClient extends TestNGCitrusSpringSupport {
         );
     }
 
-    public void validateResponseCreate(TestCaseRunner runner, TestContext context,
+    public void validateResponseCreate(TestCaseRunner runner,
                                        String color, double height, String material,
                                        String sound, String wingsState) {
         runner.$(
