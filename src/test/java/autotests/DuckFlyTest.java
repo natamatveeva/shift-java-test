@@ -1,6 +1,7 @@
 package autotests;
 
 import autotests.clients.DuckActionsClient;
+import autotests.payloads.DuckPropertiesCreate;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
@@ -22,12 +23,13 @@ public class DuckFlyTest extends DuckActionsClient {
     public void successfulFly(@Optional @CitrusResource TestCaseRunner runner,
                               @Optional @CitrusResource TestContext context
                               ) {
-        String color = "yellow";
-        double height = 0.3;
-        String material = "rubber";
-        String sound = "qack";
-        String wingsState = "ACTIVE";
-        createDuck(runner, color, height, material, sound, wingsState);
+        DuckPropertiesCreate duckProperties = new DuckPropertiesCreate()
+                .color("yellow")
+                .height(0.3)
+                .material("rubber")
+                .sound("quack")
+                .wingsState(DuckPropertiesCreate.WingsState.ACTIVE);
+        createDuck(runner, duckProperties);
         String id = extractIdDuckFromResponse(runner, context);
         flyDuck(runner, id);
         validateResponse(runner, "{\n" +
@@ -40,12 +42,13 @@ public class DuckFlyTest extends DuckActionsClient {
     public void unsuccessfulFly(@Optional @CitrusResource TestCaseRunner runner,
                                 @Optional @CitrusResource TestContext context
                                 ) {
-        String color = "yellow";
-        double height = 0.3;
-        String material = "rubber";
-        String sound = "qack";
-        String wingsState = "FIXED";
-        createDuck(runner, color, height, material, sound, wingsState);
+        DuckPropertiesCreate duckProperties = new DuckPropertiesCreate()
+                .color("yellow")
+                .height(0.3)
+                .material("rubber")
+                .sound("quack")
+                .wingsState(DuckPropertiesCreate.WingsState.FIXED);
+        createDuck(runner, duckProperties);
         String id = extractIdDuckFromResponse(runner, context);
         flyDuck(runner, id);
         validateResponse(runner, "{\n" +
@@ -58,12 +61,13 @@ public class DuckFlyTest extends DuckActionsClient {
     public void undefinedFly(@Optional @CitrusResource TestCaseRunner runner,
                              @Optional @CitrusResource TestContext context
                             ) {
-        String color = "yellow";
-        double height = 0.3;
-        String material = "rubber";
-        String sound = "qack";
-        String wingsState = "UNDEFINED";
-        createDuck(runner, color, height, material, sound, wingsState);
+        DuckPropertiesCreate duckProperties = new DuckPropertiesCreate()
+                .color("yellow")
+                .height(0.3)
+                .material("rubber")
+                .sound("quack")
+                .wingsState(DuckPropertiesCreate.WingsState.UNDEFINED);
+        createDuck(runner, duckProperties);
         String id = extractIdDuckFromResponse(runner, context);
         flyDuck(runner, id);
         validateResponse(runner, "{\n" +
