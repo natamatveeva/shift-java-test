@@ -14,71 +14,56 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import static com.consol.citrus.container.FinallySequence.Builder.doFinally;
 import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 public class DuckPropertiesTest extends DuckActionsClient {
 
     @Test(description = "Вывод параметров уточки (id целое четное)")
-    @Parameters({"runner", "context"})
+//    @Parameters({"runner", "context"})
     @CitrusTest
-    public void getPropertiesEvenNumbered(@Optional @CitrusResource TestCaseRunner runner,
-                                          @Optional @CitrusResource TestContext context
-    ) {
-        DuckPropertiesCreate duckProperties = new DuckPropertiesCreate()
-                .color("yellow")
-                .height(0.3)
-                .material("rubber")
-                .sound("quack")
-                .wingsState(DuckPropertiesCreate.WingsState.FIXED);
-        createDuck(runner, duckProperties);
-        String id = extractIdDuckFromResponse(runner, context);
+    public void getPropertiesEvenNumbered(@Optional @CitrusResource TestCaseRunner runner) {
+        runner.variable("duckId","12");
+        runner.$(doFinally().actions(context ->
+                databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
+        databaseUpdate(runner,
+                "insert into DUCK (id, color, height, material, sound, wings_state)\n" +
+                "values (${duckId}, 'orange', 3.0, 'rubber', 'quack','ACTIVE');");
+        validateDuckInDatabase(runner, "${duckId}", "orange", "3.0", "rubber", "quack", "ACTIVE");
         String responseMessage = "{\n" +
-                                 "\"color\": \"yellow\",\n" +
-                                 "\"height\": " + 30.0 + ",\n" +
-                                 "\"material\": \"rubber\",\n" +
-                                 "\"sound\": \"quack\",\n" +
-                                 "\"wingsState\": \"FIXED\"\n" +
-                                 "}";
-        if (Integer.parseInt(id) % 2 == 0) {
-            getPropertiesDuck(runner, id);
-            validateResponse(runner, responseMessage);
-        } else {
-            createDuck(runner, duckProperties);
-            id = extractIdDuckFromResponse(runner, context);
-            getPropertiesDuck(runner, id);
-            validateResponse(runner, responseMessage);
-        }
-    }
-
-    @Test(description = "Вывод параметров уточки (id целое нечетное)")
-    @CitrusTest
-    public void getPropertiesOdd(@Optional @CitrusResource TestCaseRunner runner,
-                                 @Optional @CitrusResource TestContext context
-    ) {
-        DuckPropertiesCreate duckProperties = new DuckPropertiesCreate()
-                .color("yellow")
-                .height(0.3)
-                .material("rubber")
-                .sound("quack")
-                .wingsState(DuckPropertiesCreate.WingsState.ACTIVE);
-        createDuck(runner, duckProperties);
-        String id = extractIdDuckFromResponse(runner, context);
-        String responseMessage = "{\n" +
-                                 "\"color\": \"yellow\",\n" +
-                                 "\"height\": " + 30.0 + ",\n" +
+                                 "\"color\": \"orange\",\n" +
+                                 "\"height\": " + 300.0 + ",\n" +
                                  "\"material\": \"rubber\",\n" +
                                  "\"sound\": \"quack\",\n" +
                                  "\"wingsState\": \"ACTIVE\"\n" +
                                  "}";
-        if (Integer.parseInt(id) % 2 == 1) {
-            getPropertiesDuck(runner, id);
-            validateResponse(runner, responseMessage);
-        } else {
-            createDuck(runner, duckProperties);
-            id = extractIdDuckFromResponse(runner, context);
-            getPropertiesDuck(runner, id);
-            validateResponse(runner, responseMessage);
-        }
+
+        getPropertiesDuck(runner, "${duckId}");
+        validateResponse(runner, responseMessage);
+
+    }
+
+    @Test(description = "Вывод параметров уточки (id целое нечетное)")
+    @CitrusTest
+    public void getPropertiesOdd(@Optional @CitrusResource TestCaseRunner runner) {
+        runner.variable("duckId","13");
+        runner.$(doFinally().actions(context ->
+                databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
+        databaseUpdate(runner,
+                "insert into DUCK (id, color, height, material, sound, wings_state)\n" +
+                "values (${duckId}, 'black', 3.5, 'metall', 'quack','ACTIVE');");
+        validateDuckInDatabase(runner, "${duckId}", "black", "3.5", "metall", "quack", "ACTIVE");
+        String responseMessage = "{\n" +
+                                 "\"color\": \"black\",\n" +
+                                 "\"height\": " + 350.0 + ",\n" +
+                                 "\"material\": \"metall\",\n" +
+                                 "\"sound\": \"quack\",\n" +
+                                 "\"wingsState\": \"ACTIVE\"\n" +
+                                 "}";
+
+        getPropertiesDuck(runner, "${duckId}");
+        validateResponse(runner, responseMessage);
+
     }
 }
