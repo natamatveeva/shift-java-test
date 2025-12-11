@@ -47,11 +47,4 @@ public class DuckCreateTest extends DuckActionsClient {
         validateDuckInDatabase(runner, "${duckId}", "orange", "3.0", "wood", "quack", "ACTIVE");
     }
 
-    @Test(dataProvider = "duckList")
-    @CitrusTest
-    @CitrusParameters({"payload", "response", "runner"})
-    public void successfulDuckCreate(Object payload, String response, @Optional @CitrusResource TestCaseRunner runner) {
-
-    }
-
 }
