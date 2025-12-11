@@ -35,7 +35,7 @@ public class DuckSwimTest extends DuckActionsClient {
     @Test(description = "Уточка плыви (несуществующий id)")
     @CitrusTest
     public void unsuccessfullSwimDb(@Optional @CitrusResource TestCaseRunner runner) {
-        runner.variable("duckId","1");
+        runner.variable("duckId","9");
         runner.$(doFinally().actions(context ->
                 databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
         databaseUpdate(runner,
