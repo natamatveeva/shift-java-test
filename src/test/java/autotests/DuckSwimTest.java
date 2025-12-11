@@ -19,33 +19,6 @@ import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 public class DuckSwimTest extends DuckActionsClient {
 
-    @Test(description = "Уточка плыви (существующий id)")
-    @CitrusTest
-    public void successfulSwimRightId(@Optional @CitrusResource TestCaseRunner runner,
-                                      @Optional @CitrusResource TestContext context) {
-        DuckPropertiesCreate duckProperties = new DuckPropertiesCreate()
-                .color("yellow")
-                .height(0.3)
-                .material("rubber")
-                .sound("quack")
-                .wingsState(DuckPropertiesCreate.WingsState.ACTIVE);
-        createDuck(runner, duckProperties);
-        String id = extractIdDuckFromResponse(runner, context);
-        swimDuck(runner, id);
-        validateResponse(runner, "{\n" +
-                                         "\"message\":" + "\"Paws are not found ((((\"\n" +
-                                         "}");}
-
-    @Test(description = "Уточка плыви (несуществующий id)")
-    @CitrusTest
-    public void successfulSwimWrongId(@Optional @CitrusResource TestCaseRunner runner,
-                                      @Optional @CitrusResource TestContext context) {
-        swimDuck(runner, "0");
-        validateResponse(runner, "{\n" +
-                                 "\"message\":" + "\"Paws are not found ((((\"\n" +
-                                 "}");
-    }
-
     @Test(description = "Уточка плыви (корректный id)")
     @CitrusTest
     public void successfullSwimDb(@Optional @CitrusResource TestCaseRunner runner) {
@@ -58,4 +31,18 @@ public class DuckSwimTest extends DuckActionsClient {
         swimDuck(runner,"${duckId}");
         validateResponseResources(runner, "DuckActionsTest/unsuccessDuckSwim.json");
     }
+
+    @Test(description = "Уточка плыви (несуществующий id)")
+    @CitrusTest
+    public void unsuccessfullSwimDb(@Optional @CitrusResource TestCaseRunner runner) {
+        runner.variable("duckId","1");
+        runner.$(doFinally().actions(context ->
+                databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
+        databaseUpdate(runner,
+                "insert into DUCK (id, color, height, material, sound, wings_state)\n" +
+                "values (${duckId}, 'orange', 3.0, 'cheese', 'hrum','ACTIVE');");
+        swimDuck(runner,"0");
+        validateResponseResources(runner, "DuckActionsTest/unsuccessDuckSwim.json");
+    }
+
 }
