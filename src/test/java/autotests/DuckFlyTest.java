@@ -8,6 +8,9 @@ import com.consol.citrus.annotations.CitrusTest;
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.message.MessageType;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.testng.annotations.Optional;
@@ -17,6 +20,9 @@ import static com.consol.citrus.container.FinallySequence.Builder.doFinally;
 import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
+@Epic("Тесты duck-action-controller")
+@Feature("Действие Лететь")
+@Story("Endpoint /api/duck/action/fly")
 public class DuckFlyTest extends DuckActionsClient {
 
     @Test(description = "Проверка полета с активными крыльями")

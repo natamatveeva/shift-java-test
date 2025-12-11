@@ -8,6 +8,9 @@ import com.consol.citrus.annotations.CitrusTest;
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.message.MessageType;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.testng.annotations.Optional;
@@ -18,10 +21,12 @@ import static com.consol.citrus.container.FinallySequence.Builder.doFinally;
 import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
+@Epic("Тесты duck-action-controller")
+@Feature("Получить свойства утки")
+@Story("Endpoint /api/duck/action/properties")
 public class DuckPropertiesTest extends DuckActionsClient {
 
     @Test(description = "Вывод параметров уточки (id целое четное)")
-//    @Parameters({"runner", "context"})
     @CitrusTest
     public void getPropertiesEvenNumbered(@Optional @CitrusResource TestCaseRunner runner) {
         runner.variable("duckId","12");
