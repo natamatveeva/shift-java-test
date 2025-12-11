@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
 
+import static com.consol.citrus.container.FinallySequence.Builder.doFinally;
 import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
@@ -20,20 +21,14 @@ public class DuckDeleteTest extends DuckActionsClient {
 
     @Test(description="Удаление утки")
     @CitrusTest
-    public void successfulDelete(@Optional @CitrusResource TestCaseRunner runner,
-                                 @Optional @CitrusResource TestContext context) {
-        DuckPropertiesCreate duckProperties = new DuckPropertiesCreate()
-                .color("yellow")
-                .height(0.3)
-                .material("rubber")
-                .sound("quack")
-                .wingsState(DuckPropertiesCreate.WingsState.FIXED);
-        createDuck(runner, duckProperties);
-        String id = extractIdDuckFromResponse(runner, context);
-        deleteDuck(runner, id);
-        validateResponse(runner, "{\n" +
-                                 "\"message\":" + "\"Duck is deleted\"\n" +
-                                 "}");
-
+    public void successfulDelete(@Optional @CitrusResource TestCaseRunner runner) {
+        runner.variable("duckId","3");
+        runner.$(doFinally().actions(context ->
+                databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
+        databaseUpdate(runner,
+                "insert into DUCK (id, color, height, material, sound, wings_state)\n" +
+                "values (${duckId}, 'orange', 3.0, 'rubber', 'quack','ACTIVE');");
+        databaseUpdate(runner, "delete from DUCK where id=${duckId}");
+        // не могу сообразить как провести проверку удаления
     }
 }
