@@ -1,58 +1,48 @@
 package autotests.clients;
 
-import autotests.EndpointConfig;
+import autotests.BaseTest;
 import com.consol.citrus.TestCaseRunner;
-import com.consol.citrus.http.client.HttpClient;
-import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
 import io.qameta.allure.Step;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
-import org.springframework.test.context.ContextConfiguration;
-
 import static com.consol.citrus.actions.ExecuteSQLAction.Builder.sql;
 import static com.consol.citrus.actions.ExecuteSQLQueryAction.Builder.query;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
-@ContextConfiguration(classes = {EndpointConfig.class})
-public class DuckActionsClient extends TestNGCitrusSpringSupport {
 
-    @Autowired
-    protected HttpClient duckService;
-
-    @Autowired
-    protected SingleConnectionDataSource testDb;
+public class DuckActionsClient extends BaseTest {
 
     @Step("Действие Плыть")
     public void swimDuck(TestCaseRunner runner, String id) {
-        runner.$(
-                http()
-                        .client(duckService)
-                        .send()
-                        .get("/api/duck/action/swim")
-                        .queryParam("id", id));
-
+        sendGetRequest(
+                runner,
+                duckService,
+                "/api/duck/action/swim",
+                "id",
+                id
+        );
     }
 
     @Step("Действие Лететь")
     public void flyDuck(TestCaseRunner runner, String id) {
-        runner.$(
-                http()
-                        .client(duckService)
-                        .send()
-                        .get("/api/duck/action/fly")
-                        .queryParam("id", id));
+        sendGetRequest(
+                runner,
+                duckService,
+                "/api/duck/action/fly",
+                "id",
+                id
+        );
     }
 
     @Step("Получить свойства")
     public void getPropertiesDuck(TestCaseRunner runner, String id) {
-        runner.$(
-                http()
-                        .client(duckService)
-                        .send()
-                        .get("/api/duck/action/properties")
-                        .queryParam("id", id));
+        sendGetRequest(
+                runner,
+                duckService,
+                "/api/duck/action/properties",
+                "id",
+                id
+        );
     }
 
     @Step("Обновить утку через запрос")
@@ -78,10 +68,10 @@ public class DuckActionsClient extends TestNGCitrusSpringSupport {
                         .queryParam("wingsState", newWingsState));
     }
 
-    @Step("Обновить утку через БД")
+    @Step("Запрос в БД для создания и/или обновления утки")
     public void databaseUpdate(TestCaseRunner runner, String sql) {
-            runner.$(sql(testDb)
-                    .statement(sql));
+        runner.$(sql(testDb)
+                .statement(sql));
     }
 
     @Step("Действие Крякать")
@@ -123,14 +113,16 @@ public class DuckActionsClient extends TestNGCitrusSpringSupport {
     }
 
     @Step("Валидация ответа через БД")
-    protected void validateDuckInDatabase(TestCaseRunner runner, String id, String color, String height,
-                                          String material, String sound, String wingsState) {
+    protected void validateDuckInDatabase(
+            TestCaseRunner runner, String id, String color, String height,
+            String material, String sound, String wingsState
+    ) {
         runner.$(query(testDb)
                 .statement("SELECT * FROM DUCK WHERE ID=" + id)
-                .validate("COLOR",color)
-                .validate("HEIGHT",height)
-                .validate("MATERIAL",material)
-                .validate("SOUND",sound)
-                .validate("WINGS_STATE",wingsState));
+                .validate("COLOR", color)
+                .validate("HEIGHT", height)
+                .validate("MATERIAL", material)
+                .validate("SOUND", sound)
+                .validate("WINGS_STATE", wingsState));
     }
 }
