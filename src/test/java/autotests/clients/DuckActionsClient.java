@@ -68,6 +68,18 @@ public class DuckActionsClient extends BaseTest {
                         .queryParam("wingsState", newWingsState));
     }
 
+    @Step("Создать утку")
+    public void createDuck(TestCaseRunner runner, Object payload) {
+        runner.$(
+                http()
+                        .client(duckService)
+                        .send()
+                        .get("/api/duck/create")
+                        .message()
+                        .body("")
+        );
+    }
+
     @Step("Запрос в БД для создания и/или обновления утки")
     public void databaseUpdate(TestCaseRunner runner, String sql) {
         runner.$(sql(testDb)
