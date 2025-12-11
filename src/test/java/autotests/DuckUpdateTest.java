@@ -1,24 +1,17 @@
 package autotests;
 
 import autotests.clients.DuckActionsClient;
-import autotests.payloads.DuckPropertiesCreate;
 import autotests.payloads.ResponseMessage;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.context.TestContext;
-import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
 
 import static com.consol.citrus.container.FinallySequence.Builder.doFinally;
-import static com.consol.citrus.http.actions.HttpActionBuilder.http;
-import static com.consol.citrus.validation.DelegatingPayloadVariableExtractor.Builder.fromBody;
 
 @Epic("Тесты duck-controller")
 @Feature("Обновление свойств")
