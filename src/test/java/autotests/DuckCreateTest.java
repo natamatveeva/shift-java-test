@@ -8,31 +8,19 @@ import com.consol.citrus.annotations.CitrusTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
 
+import static com.consol.citrus.container.FinallySequence.Builder.doFinally;
+
 public class DuckCreateTest extends DuckActionsClient {
 
-    @Test(description = "Создание резиновой уточки")
+    @Test(description = "создание уточки на прямую в базе")
     @CitrusTest
-    public void successfulRubberCreate(@Optional @CitrusResource TestCaseRunner runner) {
-        DuckPropertiesCreate duckProperties = new DuckPropertiesCreate()
-                .color("yellow")
-                .height(0.3)
-                .material("rubber")
-                .sound("quack")
-                .wingsState(DuckPropertiesCreate.WingsState.FIXED);
-        createDuck(runner, duckProperties);
-        validateResponseCreateResourses(runner, "DuckActionsTest/duckPropertiesValidate.json");
-    }
-
-    @Test(description = "Создание деревянной уточки")
-    @CitrusTest
-    public void successfulWoodCreate(@Optional @CitrusResource TestCaseRunner runner) {
-        DuckPropertiesCreate duckProperties = new DuckPropertiesCreate()
-                .color("yellow")
-                .height(0.3)
-                .material("wood")
-                .sound("quack")
-                .wingsState(DuckPropertiesCreate.WingsState.FIXED);
-        createDuck(runner, duckProperties);
-        validateResponseCreate(runner, "yellow", 0.3, "wood", "quack", DuckPropertiesCreate.WingsState.FIXED);
+    public void successfulCreateDb(@Optional @CitrusResource TestCaseRunner runner) {
+        runner.variable("duckId","1");
+        runner.$(doFinally().actions(context ->
+                databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
+        databaseUpdate(runner,
+                "insert into DUCK (id, color, height, material, sound, wings_state)\n" +
+                "values (${duckId}, 'blue', 1.0, 'rubber', 'quack','ACTIVE');");
+        validateDuckInDatabase(runner, "${duckId}", "blue", "1.0", "rubber", "quack", "ACTIVE");
     }
 }
