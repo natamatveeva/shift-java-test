@@ -13,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.test.context.ContextConfiguration;
 
+import static com.consol.citrus.actions.ExecuteSQLAction.Builder.sql;
 import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
@@ -23,6 +25,9 @@ public class DuckActionsClient extends TestNGCitrusSpringSupport {
 
     @Autowired
     protected HttpClient duckService;
+
+    @Autowired
+    protected SingleConnectionDataSource testDb;
 
     public void createDuck(TestCaseRunner runner, Object duckProperties) {
         runner.$(
@@ -95,6 +100,11 @@ public class DuckActionsClient extends TestNGCitrusSpringSupport {
                         .queryParam("wingsState", newWingsState));
     }
 
+    public void databaseUpdate(TestCaseRunner runner, String sql) {
+        runner.$(sql(testDb)
+                .statement(sql));
+    }
+
     public void getQuackDuck(TestCaseRunner runner, String id, int repetitionCount, int soundCount) {
         runner.$(
                 http()
@@ -140,12 +150,12 @@ public class DuckActionsClient extends TestNGCitrusSpringSupport {
         );
     }
 
-    public void validateResponseCreateResourses(TestCaseRunner runner, String resourcePath) {
+    public void validateResponseResources(TestCaseRunner runner, String resourcePath) {
         runner.$(
                 http()
                         .client(duckService)
                         .receive()
-                        .response(HttpStatus.OK)
+                        .response()
                         .message()
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .body(new ClassPathResource(resourcePath)));
