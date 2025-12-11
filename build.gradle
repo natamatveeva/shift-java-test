@@ -18,8 +18,8 @@ dependencies {
 
     testImplementation 'org.slf4j:slf4j-reload4j:2.0.7'
 
-    testImplementation 'com.consol.citrus:cirtus-sql:3.4.0'
-    testImplementation 'com.h2database:h2:1.4.196'
+    testImplementation group: 'com.h2database', name: 'h2', version: '1.4.196'
+    testImplementation group: 'com.consol.citrus', name: 'citrus-sql', version: '3.4.0'
 
     testCompileOnly 'org.projectlombok:lombok:1.18.28'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
