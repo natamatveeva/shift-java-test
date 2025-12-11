@@ -1,0 +1,46 @@
+package autotests;
+
+import autotests.clients.DuckActionsClient;
+import com.consol.citrus.TestCaseRunner;
+import com.consol.citrus.annotations.CitrusResource;
+import com.consol.citrus.annotations.CitrusTest;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Test;
+
+import static com.consol.citrus.container.FinallySequence.Builder.doFinally;
+
+@Epic("Тесты duck-action-controller")
+@Feature("Действие Плыть")
+@Story("Endpoint /api/duck/action/swim")
+public class DuckSwimTest extends DuckActionsClient {
+
+    @Test(description = "Уточка плыви (корректный id)")
+    @CitrusTest
+    public void successfullSwimDb(@Optional @CitrusResource TestCaseRunner runner) {
+        runner.variable("duckId","1");
+        runner.$(doFinally().actions(context ->
+                databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
+        databaseUpdate(runner,
+                "insert into DUCK (id, color, height, material, sound, wings_state)\n" +
+                "values (${duckId}, 'orange', 3.0, 'cheese', 'hrum','ACTIVE');");
+        swimDuck(runner,"${duckId}");
+        validateResponseResources(runner, "DuckActionsTest/unsuccessDuckSwim.json");
+    }
+
+    @Test(description = "Уточка плыви (несуществующий id)")
+    @CitrusTest
+    public void unsuccessfullSwimDb(@Optional @CitrusResource TestCaseRunner runner) {
+        runner.variable("duckId","9");
+        runner.$(doFinally().actions(context ->
+                databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
+        databaseUpdate(runner,
+                "insert into DUCK (id, color, height, material, sound, wings_state)\n" +
+                "values (${duckId}, 'orange', 3.0, 'cheese', 'hrum','ACTIVE');");
+        swimDuck(runner,"0");
+        validateResponseResources(runner, "DuckActionsTest/unsuccessDuckSwim.json");
+    }
+
+}
