@@ -1,6 +1,6 @@
 package autotests.clients;
 
-import autotests.tests.EndpointConfig;
+import autotests.EndpointConfig;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.http.client.HttpClient;
