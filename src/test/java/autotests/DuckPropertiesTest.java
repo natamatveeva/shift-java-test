@@ -16,14 +16,13 @@ import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 public class DuckPropertiesTest extends TestNGCitrusSpringSupport {
-
-//    String id;
+    public static final String URL = "http://localhost:2222/";
 
     @Test(description = "Вывод параметров уточки (id целое четное)")
     @Parameters({"runner", "context"})
     @CitrusTest
-    public void getPropertiesEvenNumbered(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
-            TestContext context) {
+    public void getPropertiesEvenNumbered(@Optional @CitrusResource TestCaseRunner runner,
+                                          @Optional @CitrusResource TestContext context) {
         String color = "yellow";
         double height = 1.0;
         String material = "rubber";
@@ -88,7 +87,7 @@ public class DuckPropertiesTest extends TestNGCitrusSpringSupport {
     ) {
         runner.$(
                 http()
-                        .client("http://localhost:2222")
+                        .client(URL)
                         .send()
                         .post("/api/duck/create")
                         .message().contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -105,7 +104,7 @@ public class DuckPropertiesTest extends TestNGCitrusSpringSupport {
     public String extractIdDuckFromResponse(TestCaseRunner runner, TestContext context) {
         runner.$(
                 http()
-                        .client("http://localhost:2222")
+                        .client(URL)
                         .receive()
                         .response(HttpStatus.OK)
                         .message()
@@ -118,7 +117,7 @@ public class DuckPropertiesTest extends TestNGCitrusSpringSupport {
     public void getPropertiesDuck(TestCaseRunner runner, String id) {
         runner.$(
                 http()
-                        .client("http://localhost:2222")
+                        .client(URL)
                         .send()
                         .get("/api/duck/action/properties")
                         .queryParam("id", id));
@@ -127,7 +126,7 @@ public class DuckPropertiesTest extends TestNGCitrusSpringSupport {
     public void validateResponse(TestCaseRunner runner, String responseMessage) {
         runner.$(
                 http()
-                        .client("http://localhost:2222")
+                        .client(URL)
                         .receive()
                         .response(HttpStatus.OK)
                         .message()

@@ -9,17 +9,20 @@ import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 public class DuckQuackTest extends TestNGCitrusSpringSupport {
+    public static final String URL = "http://localhost:2222/";
 
     @Test(description = "Тест издаваемого звука, если id четный")
+    @Parameters({"runner", "context"})
     @CitrusTest
-    public void successefulQuackEvenNumbered(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
-                                             TestContext context) {
+    public void successefulQuackEvenNumbered(@Optional @CitrusResource TestCaseRunner runner,
+                                             @Optional @CitrusResource TestContext context) {
         String color = "yellow";
         double height = 0.3;
         String material = "rubber";
@@ -41,9 +44,10 @@ public class DuckQuackTest extends TestNGCitrusSpringSupport {
     }
 
     @Test(description = "Тест издаваемого звука, если id нечетный")
+    @Parameters({"runner", "context"})
     @CitrusTest
-    public void successefulQuackOdd(@Optional @CitrusResource TestCaseRunner runner, @Optional @CitrusResource
-            TestContext context) {
+    public void successefulQuackOdd(@Optional @CitrusResource TestCaseRunner runner,
+                                    @Optional @CitrusResource TestContext context) {
         String color = "yellow";
         double height = 0.3;
         String material = "rubber";
@@ -74,7 +78,7 @@ public class DuckQuackTest extends TestNGCitrusSpringSupport {
     ) {
         runner.$(
                 http()
-                        .client("http://localhost:2222")
+                        .client(URL)
                         .send()
                         .post("/api/duck/create")
                         .message().contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -91,7 +95,7 @@ public class DuckQuackTest extends TestNGCitrusSpringSupport {
     public String extractIdDuckFromResponse(TestCaseRunner runner, TestContext context) {
         runner.$(
                 http()
-                        .client("http://localhost:2222")
+                        .client(URL)
                         .receive()
                         .response(HttpStatus.OK)
                         .message()
@@ -104,7 +108,7 @@ public class DuckQuackTest extends TestNGCitrusSpringSupport {
     public void getQuackDuck(TestCaseRunner runner, String id, int repetitionCount, int soundCount) {
         runner.$(
                 http()
-                        .client("http://localhost:2222")
+                        .client(URL)
                         .send()
                         .get("/api/duck/action/quack")
                         .queryParam("id", id)
@@ -116,7 +120,7 @@ public class DuckQuackTest extends TestNGCitrusSpringSupport {
     public void validateResponse(TestCaseRunner runner, String responseMessage) {
         runner.$(
                 http()
-                        .client("http://localhost:2222")
+                        .client(URL)
                         .receive()
                         .response(HttpStatus.OK)
                         .message()
